@@ -35,7 +35,7 @@ function Get-Key(){
 
 function Display-Board(){
   $RUI.SetBufferContents($ZERO, $RUI.NewBufferCellArray($script:CURRENT, 'White', 'Black'))
-  #Get-ScreenCapture $script:GENERATION
+  #Get-ScreenCapture $script:GENERATION　#世代ごとの画面キャプチャを取得する
 }
 
 #LifeGameの処理を実装
@@ -64,11 +64,9 @@ function Update-NextGeneration()
                #生存
                if(($score -eq 2) -or ($score -eq 3)){
                    $result = $script:Live
-                   #if($script:GENERATION -ge 0) {Write-Host  "x:", $j,"y:", $i,"Score:" ,$score, "生存" 　>> result.txt}
                }else{
                #過疎or過密
                 $result = $script:Dead
-                #if($script:GENERATION -ge 0) {Write-Host  "x:", $j,"y:", $i,"Score:" ,$score, "過疎or過密"　>> result.txt}
                }
            }
            
@@ -77,13 +75,10 @@ function Update-NextGeneration()
                 if($score -eq 3){
                     #誕生
                     $result = $script:Live
-                    #if($script:GENERATION -ge 0) {Write-Host  "x:", $j,"y:", $i,"Score:" ,$score, "誕生" 　>> result.txt}
                 }else{
                     $result =$script:Dead
-                    #if($script:GENERATION -ge 0) {Write-Host  "x:", $j,"y:", $i,"Score:" ,$score, "死"　>> result.txt}
                 }
            }
-           #if($GENERATION -ge 0) {Write-Host  "x:", $j,"y:", $i,"Score:" ,$score, $cell, $result}
            if($result -match $script:Live){$life +=1 }
            $line += $result
            $j += 1
@@ -91,7 +86,6 @@ function Update-NextGeneration()
         $NEXT += $line
         $i += 1
     }
-    #Write-Host "GENERATION:", $script:GENERATION, "Life Number:", $life
     $script:GENERATION += 1
     $NEXT += "GENERATION:  $script:GENERATION"
     $script:CURRENT　= $NEXT
@@ -110,13 +104,10 @@ function Update-NextGeneration()
             if( ($x -lt 0) -or ($y -lt 0) -or ($x -ge $width) -or ($y -ge $height)){
                 #範囲外のため未処理
                 $score += 0
-                #Write-Host  "---------------------", "x:", $x,"y:", $y, "score:" ,$score ,"-"
             }elseif( ($x -eq $cNum) -and ($y -eq $rNum)){
                 #自身のため未処理
                 $score += 0
-                #Write-Host  "---------------------", "x:", $x,"y:", $y, "score:" ,$score ,"OWN"
             }else{
-                #Write-Host  "---------------------", "x:", $x,"y:", $y, "score:" ,$score ,$tgr, $tgr.GetType()
                 if($tgr -match $script:Live){
                     $score += 1
                 }else{
@@ -131,7 +122,7 @@ function Update-NextGeneration()
     return $score
 }
 
-#キャプチャ関数
+#画面キャプチャ
 function Get-ScreenCapture($name)
 {   
     begin {
@@ -147,10 +138,10 @@ function Get-ScreenCapture($name)
 
         Start-Sleep -Milliseconds 200
 
-        #クリップボードから画像をコピー
+        #クリップボードから画像を取得
         $bitmap = [Windows.Forms.Clipboard]::GetImage()    
 
-        #画像保存(名前がかぶらないようにしている)
+        #画像保存
         $ep = New-Object Drawing.Imaging.EncoderParameters  
         $ep.Param[0] = New-Object Drawing.Imaging.EncoderParameter ([System.Drawing.Imaging.Encoder]::Quality, [long]100)
         $screenCapturePathBase = "${pwd}\${name}"
@@ -171,11 +162,9 @@ $height = 30
 $width = $height
 
 $RUI = $host.UI.RawUI
-$FRAME = 500
 $GENERATION = 0   # 世代
 
 $CURRENT = @()   # 表示する画面文字列
-$KEY = $null # キー入力
 Make-Board         # 初期化
 Display-Board
 Write-Host " "
@@ -183,9 +172,6 @@ Write-Host "Runnning..."
 Start-Sleep -millisecond 250 #wait time
 
 while($true){
-  #$time = Measure-Command { $script:KEY = @(Get-Key) }
-  #$wait = $FRAME - $time.Milliseconds - 1 * 10
-  #if($wait -le $FRAME) { Start-Sleep -millisecond $wait }
   Update-NextGeneration
   Start-Sleep -millisecond 250 #wait time
   Display-Board
