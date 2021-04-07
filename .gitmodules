@@ -1,3 +1,6 @@
 [submodule "golang"]
 	path = golang
 	url = https://github.com/y10e/go-life.git
+[submodule "pwsh"]
+	path = pwsh
+	url = https://github.com/y10e/pwsh-life

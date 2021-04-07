@@ -5,4 +5,4 @@ LifeGame Programs which written by some langauege are stored.
 [go-life](https://github.com/y10e/go-life)
 
 ## Powershell
-[pwsh-life](https://github.com/y10e/go-life)
+[pwsh-life](https://github.com/y10e/pwsh-life)
